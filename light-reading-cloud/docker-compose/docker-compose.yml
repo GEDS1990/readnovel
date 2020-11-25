@@ -1,0 +1,57 @@
+version: '3.1'
+services:
+
+  redis:
+    image: redis:latest                                                               # 镜像'redis:latest'
+    container_name: redis                                                             # 容器名为'redis'
+    restart: always                                                                   # 指定容器退出后的重启策略为始终重启
+    #    command: redis-server /etc/redis/redis.conf --requirepass 123456 --appendonly yes # 启动redis服务并添加密码为：123456,并开启redis持久化配置
+    #    command: redis-server --requirepass 123456 --appendonly yes # 启动redis服务并添加密码为：123456,并开启redis持久化配置
+    command: redis-server --appendonly yes # 启动redis服务并添加密码为：123456,并开启redis持久化配置
+    environment:                        # 设置环境变量,相当于docker run命令中的-e
+      TZ: Asia/Shanghai
+      LANG: en_US.UTF-8
+    volumes:                            # 数据卷挂载路径设置,将本机目录映射到容器目录
+      - "./redis/data:/data"
+    #      - "./redis/redis.conf:/etc/redis/redis.conf"  # `redis.conf`文件内容`http://download.redis.io/redis-stable/redis.conf`
+    ports:                              # 映射端口
+      - "6379:6379"
+
+  elasticsearch:
+    image: elasticsearch                      # 镜像`elasticsearch`
+    container_name: elasticsearch             # 容器名为'elasticsearch'
+    restart: always                           # 指定容器退出后的重启策略为始终重启
+    # volumes:                                  # 数据卷挂载路径设置,将本机目录映射到容器目录
+    #      - "./elasticsearch/data:/usr/share/elasticsearch/data:rw"
+    #      - "./elasticsearch/conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml"
+    #      - "./elasticsearch/conf/jvm.options:/usr/share/elasticsearch/config/jvm.options"
+    #      - "./elasticsearch/logs:/usr/share/elasticsearch/logs:rw"
+    environment:                              # 设置环境变量,相当于docker run命令中的-e
+      TZ: Asia/Shanghai
+      LANG: en_US.UTF-8
+      discovery.type: single-node
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  mysql:
+    image: mysql
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ALLOW_EMPTY_PASSWORD: root
+      MYSQL_DATABASE: test
+    command:
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_0900_ai_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+    ports:
+      - 3306:3306
+    volumes:
+      - /Users/geds/dockerLocalFile/db:/var/lib/mysql
+      - ./db/conf/my.cnf:/etc/my.cnf
+      - ./db/init:/docker-entrypoint-initdb.d/
+      - /Users/geds/dockerLocalFile/sql_backup:/backup
