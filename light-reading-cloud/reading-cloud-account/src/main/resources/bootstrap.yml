@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: light-reading-cloud-account
+  profiles:
+    active: dev
+  cloud:
+    config:
+      fail-fast: true
+      discovery:
+        service-id: light-reading-cloud-config
+        enabled: true
+      profile: ${spring.profiles.active}

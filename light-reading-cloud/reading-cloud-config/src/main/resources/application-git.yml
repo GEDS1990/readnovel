@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/GEDS1990/config-repo
+          search-paths: dev,qa
