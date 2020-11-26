@@ -36,22 +36,16 @@ services:
 
   mysql:
     image: mysql
-    container_name: mysql
     restart: always
     environment:
-      MYSQL_ROOT_HOST: '%'
-      MYSQL_ALLOW_EMPTY_PASSWORD: root
-      MYSQL_DATABASE: test
+      MYSQL_ROOT_PASSWORD: 123456
     command:
       --default-authentication-plugin=mysql_native_password
       --character-set-server=utf8mb4
-      --collation-server=utf8mb4_0900_ai_ci
+      --collation-server=utf8mb4_general_ci
       --explicit_defaults_for_timestamp=true
       --lower_case_table_names=1
     ports:
       - 3306:3306
     volumes:
-      - /Users/geds/dockerLocalFile/db:/var/lib/mysql
-      - ./db/conf/my.cnf:/etc/my.cnf
-      - ./db/init:/docker-entrypoint-initdb.d/
-      - /Users/geds/dockerLocalFile/sql_backup:/backup
+      - /Users/geds/dockerLocalFile/data:/var/lib/mysql
